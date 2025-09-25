@@ -1,0 +1,6 @@
+# Ignora o arquivo de ambiente local para que não entre na imagem Docker
+.env
+
+# Ignora dependências e arquivos do git
+node_modules
+.git
