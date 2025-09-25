@@ -17,6 +17,9 @@ services:
     container_name: ecommerce_api
     restart: always
     env_file: .env
+    volumes:
+      - ./backend:/usr/src/app
+      - /usr/src/app/node_modules
     ports:
       - "3333:3333"
     environment:
