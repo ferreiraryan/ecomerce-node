@@ -1,3 +1,5 @@
+console.log("URL DO BANCO DE DADOS NO RUNTIME:", process.env.DATABASE_URL);
+
 import express, { Request, Response } from 'express';
 import authRoutes from './routes/authRoutes';
 import productRoutes from './routes/productRoutes';
