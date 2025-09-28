@@ -13,6 +13,7 @@
 .env
 /frontend/.env
 /backend/.env
+backend/.env.development
 
 # Log files
 npm-debug.log*
