@@ -1,5 +1,7 @@
-# Usa uma imagem oficial do Node.js
-FROM node:18-alpine
+# backend/Dockerfile
+
+# 1. Usa a imagem padrão do Node.js, baseada em Debian
+FROM node:18
 
 # Define o diretório de trabalho dentro do container
 WORKDIR /usr/src/app
