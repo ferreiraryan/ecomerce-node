@@ -17,9 +17,6 @@ export async function getProfile(req: Request, res: Response) {
 export async function loginUser(req: Request, res: Response) {
   try {
     const { email, password } = req.body;
-    if (!email || !password) {
-      return res.status(400).json({ message: 'Email e senha são obrigatórios.' });
-    }
 
     const { user, token } = await loginUserService({ email, password });
 
@@ -38,10 +35,6 @@ export async function loginUser(req: Request, res: Response) {
 export async function registerUser(req: Request, res: Response) {
   try {
     const { name, email, password } = req.body;
-
-    if (!name || !email || !password) {
-      return res.status(400).json({ message: 'Todos os campos são obrigatórios.' });
-    }
 
     const user = await createUserService({ name, email, password });
 
