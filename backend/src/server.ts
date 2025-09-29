@@ -3,12 +3,14 @@ console.log("URL DO BANCO DE DADOS NO RUNTIME:", process.env.DATABASE_URL);
 import express, { Request, Response } from 'express';
 import authRoutes from './routes/authRoutes';
 import productRoutes from './routes/productRoutes';
+import orderRoutes from './routes/orderRoutes';
 
 const app = express();
 const PORT = 3333;
 
 app.use(express.json());
 
+app.use('/api/orders', orderRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 
