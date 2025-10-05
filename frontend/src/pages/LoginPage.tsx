@@ -26,10 +26,17 @@ export function LoginPage() {
             <label htmlFor="email" className='block text-sm font-medium text-gray-700'>
               Endereço de email:
             </label>
-            <input type="email" id='email' name='email' required autoComplete='email' value={email} onChange={(e) => setEmail(e.target.value)} className='bg-fuchsia-50 rounded-lg shadow-lg w-full px-3 border border-gray-200 focus:outline-none focus:ring-blue-300 focus:border-blue-500' />
+            <input type="email" id='email' name='email' required autoComplete='email' value={email} onChange={(e) => setEmail(e.target.value)} className='bg-fuchsia-50 mt-1 block rounded-lg font-light text-sm shadow-lg w-full px-3 py-2 border border-gray-200 focus:outline-none focus:ring-blue-300 focus:border-blue-500' />
           </div>
           <div>
-            <button type='submit'>
+            <label htmlFor="password" className='block text-sm font-medium text-gray-700'>
+              Senha:
+            </label>
+            <input type="password" id='password' name='password' required autoComplete='email' value={email} onChange={(e) => setEmail(e.target.value)} className='bg-fuchsia-50 mt-1 block rounded-lg font-light text-sm shadow-lg w-full px-3 py-2 border border-gray-200 focus:outline-none focus:ring-blue-300 focus:border-blue-500' />
+          </div>
+          <div>
+            <button type='submit' className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
               Entrar
             </button>
           </div>
