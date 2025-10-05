@@ -1,35 +1,17 @@
-import { Container, Box, Typography } from '@mui/material';
-// A importação correta e moderna para o Grid v2
-import Grid from '@mui/material/Grid';
 
 export function HomePage() {
   const mockProducts = [
-    { id: 1, name: 'Produto 1' },
-    { id: 2, name: 'Produto 2' },
-    { id: 3, name: 'Produto 3' },
-    { id: 4, name: 'Produto 4' },
-    { id: 5, name: 'Produto 5' },
-    { id: 6, name: 'Produto 6' },
+    { id: 1, name: 'Notebook Pro', imageUrl: 'https://placehold.co/600x400/EEE/31343C?text=Notebook' },
+    { id: 2, name: 'Smartphone X1', imageUrl: 'https://placehold.co/600x400/EEE/31343C?text=Smartphone' },
+    { id: 3, name: 'Fone de Ouvido', imageUrl: 'https://placehold.co/600x400/EEE/31343C?text=Fone' },
+    { id: 4, name: 'Monitor Gamer', imageUrl: 'https://placehold.co/600x400/EEE/31343C?text=Monitor' },
+    { id: 5, name: 'Teclado Mecânico', imageUrl: 'https://placehold.co/600x400/EEE/31343C?text=Teclado' },
+    { id: 6, name: 'Mouse Sem Fio', imageUrl: 'https://placehold.co/600x400/EEE/31343C?text=Mouse' },
   ];
 
   return (
-    <Container sx={{ py: 4 }}>
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          Nossos Produtos
-        </Typography>
-      </Box>
-
-      <Grid container spacing={3}>
-        {mockProducts.map((product) => (
-          <Grid key={product.id} size={12}>
-            <Box sx={{ border: 1, borderColor: 'grey.300', p: 2, borderRadius: 2 }}>
-              <Typography variant="h6">{product.name}</Typography>
-            </Box>
-          </Grid>
-        ))}
-      </Grid>
-    </Container>
+    <div>HOME</div>
   );
 }
 
+export default HomePage;
