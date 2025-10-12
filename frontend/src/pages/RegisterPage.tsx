@@ -1,24 +1,49 @@
-import React, { useState } from 'react';
-import { Input } from '../components/common/Input'
+import { useState, FormEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { registerUser } from '../services/authService';
+
+import { Input } from '../components/common/Input';
 import { Button } from '../components/common/Button';
 
 export function RegisterPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (event: React.FormEvent) => {
+  const navigate = useNavigate();
+
+  const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
+    setError(null);
     setIsLoading(true);
 
-    console.log('Enviando dados para a API:', { email, password });
+    if (password.length < 6) {
+      setError('A senha deve ter no mínimo 6 caracteres.');
+      setIsLoading(false);
+      return;
+    }
 
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    try {
+      await registerUser({ name, email, password });
 
-    alert('Login bem-sucedido! (Simulação)');
-    setIsLoading(false);
+      alert('Cadastro realizado com sucesso! Você será redirecionado para o login.');
+      navigate('/login');
+
+    } catch (err) {
+      if (axios.isAxiosError(err) && err.response) {
+        setError(err.response.data.message);
+      } else {
+        setError('Ocorreu um erro inesperado. Tente novamente.');
+      }
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
   };
+
 
   return (
     <main className='bg-fuchsia-50 min-h-screen flex items-center justify-center'>
