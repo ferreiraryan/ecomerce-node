@@ -1,5 +1,5 @@
 import api from './api';
-import { User } from '../types/User';
+import type { User } from '../types/User';
 
 type RegisterDTO = Pick<User, 'name' | 'email' | 'password'>;
 
