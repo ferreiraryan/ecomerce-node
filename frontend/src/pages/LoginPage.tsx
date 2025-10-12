@@ -22,7 +22,7 @@ export function LoginPage() {
   return (
     <main className='bg-fuchsia-50 min-h-screen flex items-center justify-center'>
       <div className='bg-cyan-200 rounded-2xl p-8 w-full max-w-md shadow-lg'>
-        <h1 className='text-2xl font-bold text-center text-gray-800 mb-6'>Login:</h1>
+        <h1 className='text-2xl font-bold text-center text-gray-800 mb-6'>Logue:</h1>
         <form onSubmit={handleSubmit} className='space-y-6'>
           <Input
             label="Endereço de Email"
