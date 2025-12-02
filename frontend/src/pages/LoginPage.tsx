@@ -19,7 +19,7 @@ function LoginPage() {
       navigate('/');
     } catch (err: any) {
       setError(
-        err?.response?.data?.message || 'Erro ao fazer login. Tente novamente.',
+        err?.response?.data?.message || 'Erro ao fazer login. Tente novamente.'
       );
     } finally {
       setLoading(false);
@@ -27,58 +27,69 @@ function LoginPage() {
   }
 
   return (
-    <div className="max-w-md mx-auto bg-white shadow-sm rounded-lg p-6">
-      <h1 className="text-lg font-semibold mb-4">Entrar</h1>
+    <div className="min-h-screen flex items-center justify-center bg-slate-950 px-4">
+      <div className="w-full max-w-md bg-slate-900/80 border border-slate-700 rounded-2xl shadow-lg p-8">
 
-      <form className="space-y-3" onSubmit={handleSubmit}>
-        <div className="flex flex-col gap-1">
-          <label className="text-sm" htmlFor="email">
-            E-mail
-          </label>
-          <input
-            id="email"
-            className="border rounded px-3 py-2 text-sm"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
+        <div className="text-center mb-6">
+          <h1 className="text-2xl font-semibold text-slate-50 mb-2">Bem-vindo de volta</h1>
+          <p className="text-sm text-slate-400">Insira suas credenciais para entrar.</p>
         </div>
 
-        <div className="flex flex-col gap-1">
-          <label className="text-sm" htmlFor="password">
-            Senha
-          </label>
-          <input
-            id="password"
-            className="border rounded px-3 py-2 text-sm"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
+        {error && (
+          <div className="mb-4 rounded-md bg-red-900/40 border border-red-500 px-3 py-2 text-sm text-red-200 text-center">
+            {error}
+          </div>
+        )}
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        <form className="space-y-4" onSubmit={handleSubmit}>
+          <div>
+            <label className="block text-sm font-medium text-slate-200 mb-1" htmlFor="email">
+              E-mail
+            </label>
+            <input
+              id="email"
+              className="w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-2 text-slate-100 text-sm outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all placeholder-slate-500"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="seu@email.com"
+              required
+            />
+          </div>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-slate-900 text-white py-2 rounded mt-2 text-sm disabled:opacity-60"
-        >
-          {loading ? 'Entrando...' : 'Entrar'}
-        </button>
-      </form>
+          <div>
+            <label className="block text-sm font-medium text-slate-200 mb-1" htmlFor="password">
+              Senha
+            </label>
+            <input
+              id="password"
+              className="w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-2 text-slate-100 text-sm outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all placeholder-slate-500"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+              required
+            />
+          </div>
 
-      <p className="mt-4 text-xs text-slate-600">
-        Não tem conta?{' '}
-        <Link to="/register" className="text-slate-900 underline">
-          Criar conta
-        </Link>
-      </p>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full mt-2 inline-flex items-center justify-center rounded-lg bg-emerald-500 px-4 py-2.5 text-sm font-medium text-slate-950 hover:bg-emerald-400 disabled:opacity-60 disabled:cursor-not-allowed transition-colors shadow-lg shadow-emerald-500/20"
+          >
+            {loading ? 'Entrando...' : 'Entrar'}
+          </button>
+        </form>
+
+        <p className="mt-6 text-center text-xs text-slate-400">
+          Não tem conta?{' '}
+          <Link to="/register" className="font-medium text-emerald-400 hover:text-emerald-300 hover:underline transition-colors">
+            Criar conta
+          </Link>
+        </p>
+      </div>
     </div>
   );
 }
 
 export default LoginPage;
-

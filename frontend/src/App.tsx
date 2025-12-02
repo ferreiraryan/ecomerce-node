@@ -1,58 +1,69 @@
 import { Routes, Route, Link } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
 import HomePage from './pages/HomePage';
-// import ProductPage from './pages/ProductPage';
 import LoginPage from './pages/LoginPage';
-// import ProfilePage from './pages/ProfilePage';
+import RegisterPage from './pages/RegisterPage'; // Adicionado
 // import CartPage from './pages/CartPage';
+// import ProfilePage from './pages/ProfilePage';
 
 function App() {
   const { user, logout, loading } = useAuth();
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Carregando...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50 text-slate-600">
+        <div className="animate-pulse">Carregando aplicação...</div>
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50">
-      <header className="bg-slate-900 text-white">
+    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans">
+      <header className="bg-slate-900 text-white sticky top-0 z-50 shadow-md">
         <div className="max-w-5xl mx-auto flex items-center justify-between px-4 py-3">
-          <Link to="/" className="font-bold text-lg">
+          <Link to="/" className="font-bold text-xl tracking-tight hover:text-blue-400 transition-colors">
             Ecomerce-Node
           </Link>
 
-          <nav className="flex gap-4 items-center text-sm">
-            <Link to="/cart">Carrinho</Link>
+          <nav className="flex gap-4 items-center text-sm font-medium">
+            <Link to="/cart" className="hover:text-blue-300 transition-colors">
+              Carrinho
+            </Link>
 
             {user ? (
-              <>
-                <Link to="/profile">Olá, {user.name}</Link>
+              <div className="flex items-center gap-3 pl-4 border-l border-slate-700">
+                <Link to="/profile" className="hover:text-blue-300 transition-colors">
+                  Olá, {user.name.split(' ')[0]}
+                </Link>
                 <button
                   onClick={logout}
-                  className="border border-white/30 px-2 py-1 rounded text-xs"
+                  className="bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 px-3 py-1 rounded-md text-xs transition-all"
                 >
                   Sair
                 </button>
-              </>
+              </div>
             ) : (
-              <>
-                <Link to="/login">Entrar</Link>
+              <div className="flex items-center gap-3 pl-4 border-l border-slate-700">
+                <Link to="/login" className="hover:text-blue-300 transition-colors">
+                  Entrar
+                </Link>
                 <Link
                   to="/register"
-                  className="bg-white text-slate-900 px-3 py-1 rounded text-xs font-medium"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-md text-xs transition-colors shadow-sm"
                 >
                   Criar conta
                 </Link>
-              </>
+              </div>
             )}
           </nav>
         </div>
       </header>
 
-      <main className="flex-1 max-w-5xl mx-auto w-full px-4 py-6">
+      <main className="flex-1 max-w-5xl mx-auto w-full">
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
         </Routes>
       </main>
     </div>
@@ -60,4 +71,3 @@ function App() {
 }
 
 export default App;
-
