@@ -27,6 +27,22 @@ services:
     depends_on:
       - db
 
+  web:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: ecommerce-web
+    ports:
+      - "5173:5173"  # host:container
+    volumes:
+      - ./frontend:/app          # hot reload no código
+      - /app/node_modules        # evita sobrescrever node_modules
+    environment:
+      # URL que o frontend usa pra chamar a API (do ponto de vista do NAVEGADOR)
+      - VITE_API_URL=http://localhost:3000
+    depends_on:
+      - api
+
 volumes:
   pgdata:
 
