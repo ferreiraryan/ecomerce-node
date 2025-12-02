@@ -17,7 +17,7 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans">
+    <div className="min-h-screen flex flex-col bg-slate-950 text-white font-sans">
       <header className="bg-slate-900 text-white sticky top-0 z-50 shadow-md">
         <div className="max-w-5xl mx-auto flex items-center justify-between px-4 py-3">
           <Link to="/" className="font-bold text-xl tracking-tight hover:text-blue-400 transition-colors">
