@@ -1,11 +1,13 @@
+import type { OrderItem } from "./OrderItem";
+
 export interface Product {
-  id: number;
+  id: string;
   name: string;
-  description?: string;
+  description: string;
   price: number;
-  imageUrl?: string;
-  stock: number;
-  createdAt?: string;
-  updatedAt?: string;
+  imageUrl?: string | null;
+  orderItems?: OrderItem[];
+  createdAt: string;
+  updatedAt: string;
 }
 
