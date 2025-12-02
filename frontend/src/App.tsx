@@ -2,9 +2,8 @@ import { Routes, Route, Link } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage'; // Adicionado
-// import CartPage from './pages/CartPage';
-// import ProfilePage from './pages/ProfilePage';
+import RegisterPage from './pages/RegisterPage';
+import ProductPage from './pages/ProductPage';
 
 function App() {
   const { user, logout, loading } = useAuth();
@@ -59,11 +58,15 @@ function App() {
         </div>
       </header>
 
-      <main className="flex-1 max-w-5xl mx-auto w-full">
+      <main className="flex-1 mx-auto w-full">
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/product/:id" element={<ProductPage />} />
+
+
+
         </Routes>
       </main>
     </div>
