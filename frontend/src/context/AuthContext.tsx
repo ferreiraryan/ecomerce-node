@@ -32,7 +32,7 @@ export function AuthProvider({ children }: { children: react.ReactNode }) {
     }
 
     api
-      .get('/profile')
+      .get('/auth/profile')
       .then((res) => setUser(res.data))
       .catch(() => {
         localStorage.removeItem('token');
@@ -41,7 +41,7 @@ export function AuthProvider({ children }: { children: react.ReactNode }) {
   }, []);
 
   async function login(email: string, password: string) {
-    const res = await api.post('/login', { email, password });
+    const res = await api.post('auth/login', { email, password });
     const { token, user } = res.data;
 
     localStorage.setItem('token', token);
@@ -49,7 +49,7 @@ export function AuthProvider({ children }: { children: react.ReactNode }) {
   }
 
   async function register(name: string, email: string, password: string) {
-    const res = await api.post('/register', { name, email, password });
+    const res = await api.post('/auth/register', { name, email, password });
     const { token, user } = res.data;
 
     localStorage.setItem('token', token);

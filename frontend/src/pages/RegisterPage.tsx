@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom"; // <--- Importante para navegação SPA
+import { Link, useNavigate } from "react-router-dom"; // useNavigate para redirecionar
+import { useAuth } from "../context/AuthContext"; // Importa o hook do contexto
 
 interface RegisterFormData {
   name: string;
@@ -9,6 +10,9 @@ interface RegisterFormData {
 }
 
 const RegisterPage: React.FC = () => {
+  const { register } = useAuth();
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState<RegisterFormData>({
     name: "",
     email: "",
@@ -17,7 +21,6 @@ const RegisterPage: React.FC = () => {
   });
 
   const [errors, setErrors] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -27,7 +30,6 @@ const RegisterPage: React.FC = () => {
       [name]: value,
     }));
     setErrors(null);
-    setSuccess(null);
   }
 
   function validate() {
@@ -42,7 +44,6 @@ const RegisterPage: React.FC = () => {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setErrors(null);
-    setSuccess(null);
 
     const validationError = validate();
     if (validationError) {
@@ -53,28 +54,14 @@ const RegisterPage: React.FC = () => {
     try {
       setIsSubmitting(true);
 
-      const response = await fetch("http://localhost:3000/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
-        }),
-      });
+      await register(formData.name, formData.email, formData.password);
 
-      if (!response.ok) {
-        const data = await response.json().catch(() => null);
-        const message = data?.message || data?.error || "Erro ao registrar. Tente novamente.";
-        setErrors(message);
-        return;
-      }
+      navigate("/");
 
-      setSuccess("Conta criada com sucesso! Você já pode fazer login.");
-      setFormData({ name: "", email: "", password: "", confirmPassword: "" });
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      setErrors("Erro de conexão com o servidor.");
+      const message = err.response?.data?.message || err.response?.data?.error || "Erro ao registrar. Tente novamente.";
+      setErrors(message);
     } finally {
       setIsSubmitting(false);
     }
@@ -92,12 +79,6 @@ const RegisterPage: React.FC = () => {
         {errors && (
           <div className="mb-4 rounded-md bg-red-900/40 border border-red-500 px-3 py-2 text-sm text-red-200 text-center">
             {errors}
-          </div>
-        )}
-
-        {success && (
-          <div className="mb-4 rounded-md bg-emerald-900/40 border border-emerald-500 px-3 py-2 text-sm text-emerald-200 text-center">
-            {success}
           </div>
         )}
 

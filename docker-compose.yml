@@ -39,7 +39,7 @@ services:
       - /app/node_modules        # evita sobrescrever node_modules
     environment:
       # URL que o frontend usa pra chamar a API (do ponto de vista do NAVEGADOR)
-      - VITE_API_URL=http://localhost:3000
+      - VITE_API_URL=http://localhost:3333
     depends_on:
       - api
 
