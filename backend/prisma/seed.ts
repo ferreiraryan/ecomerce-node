@@ -6,22 +6,19 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('🌱 Iniciando o script de seed...');
 
-  // 1. Limpar dados antigos (Ordem importa por causa das chaves estrangeiras)
   console.log('🧹 Limpando banco de dados...');
   await prisma.orderItem.deleteMany();
   await prisma.order.deleteMany();
   await prisma.product.deleteMany();
   await prisma.category.deleteMany();
-  // Não deletamos usuários para não perder seu login, o upsert resolve.
 
-  // 2. Criar/Atualizar Admin
   const adminEmail = 'admin@ecommerce.com';
   const adminPassword = 'adminpassword123';
   const hashedPassword = await bcrypt.hash(adminPassword, 10);
 
   const admin = await prisma.user.upsert({
     where: { email: adminEmail },
-    update: {}, // Se já existe, não faz nada
+    update: {},
     create: {
       name: 'Admin Master',
       email: adminEmail,
