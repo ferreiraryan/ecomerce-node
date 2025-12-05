@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 function LoginPage() {
-  const { login } = useAuth();
+  const { signIn } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -15,7 +15,7 @@ function LoginPage() {
     setError(null);
     setLoading(true);
     try {
-      await login(email, password);
+      await signIn({ email, password });
       navigate('/');
     } catch (err: any) {
       setError(

@@ -14,7 +14,7 @@ import {
 import type { Order } from '../types/Order';
 
 export function ProfilePage() {
-  const { user, logout } = useAuth();
+  const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
@@ -34,7 +34,7 @@ export function ProfilePage() {
   }, []);
 
   const handleLogout = () => {
-    logout();
+    signOut();
     navigate('/login');
   };
 
@@ -83,12 +83,11 @@ export function ProfilePage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-          {/* COLUNA ESQUERDA: Card do Usuário */}
           <div className="lg:col-span-1">
             <div className="bg-slate-900 rounded-2xl p-6 border border-slate-800 shadow-xl sticky top-8">
               <div className="flex flex-col items-center text-center mb-6">
                 <div className="w-24 h-24 bg-slate-800 rounded-full flex items-center justify-center mb-4 border-2 border-emerald-500/30 text-emerald-400 text-3xl font-bold">
-                  {user?.name.charAt(0).toUpperCase()}
+                  {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
                 </div>
                 <h2 className="text-xl font-bold text-slate-50">{user?.name}</h2>
                 <p className="text-slate-400 text-sm">{user?.email}</p>
@@ -131,7 +130,6 @@ export function ProfilePage() {
               orders.map((order) => (
                 <div key={order.id} className="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden shadow-lg transition-all hover:border-slate-700">
 
-                  {/* Cabeçalho do Pedido */}
                   <div className="bg-slate-800/50 p-4 sm:p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-800">
                     <div>
                       <div className="text-sm text-slate-400 mb-1 flex items-center gap-2">
@@ -153,15 +151,12 @@ export function ProfilePage() {
                     </div>
                   </div>
 
-                  {/* Detalhes do Pedido */}
                   <div className="p-4 sm:p-6">
-                    {/* Endereço Resumido */}
                     <div className="mb-4 flex items-start gap-2 text-sm text-slate-400 bg-slate-950/50 p-3 rounded-lg">
                       <MapPin className="w-4 h-4 mt-0.5 text-emerald-500" />
                       <span>{order.shippingAddress}</span>
                     </div>
 
-                    {/* Lista de Itens */}
                     <div className="space-y-4">
                       {order.items.map((item) => (
                         <div key={item.id} className="flex items-center gap-4">
@@ -186,7 +181,6 @@ export function ProfilePage() {
                     </div>
                   </div>
 
-                  {/* Rodapé do Card */}
                   <div className="bg-slate-950/30 p-3 flex justify-center border-t border-slate-800">
                     <Link
                       to={`/order/${order.id}`}

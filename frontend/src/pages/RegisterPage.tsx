@@ -54,7 +54,11 @@ const RegisterPage: React.FC = () => {
     try {
       setIsSubmitting(true);
 
-      await register(formData.name, formData.email, formData.password);
+      await register({
+        name: formData.name,
+        email: formData.email,
+        password: formData.password
+      });
 
       navigate("/");
 
