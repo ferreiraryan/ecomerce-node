@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   User,
   Package,
@@ -188,9 +188,12 @@ export function ProfilePage() {
 
                   {/* Rodapé do Card */}
                   <div className="bg-slate-950/30 p-3 flex justify-center border-t border-slate-800">
-                    <button className="text-sm text-slate-400 hover:text-emerald-400 flex items-center gap-1 transition-colors">
+                    <Link
+                      to={`/order/${order.id}`}
+                      className="text-sm text-slate-400 hover:text-emerald-400 flex items-center gap-1 transition-colors"
+                    >
                       Ver detalhes completos <ChevronRight className="w-4 h-4" />
-                    </button>
+                    </Link>
                   </div>
                 </div>
               ))

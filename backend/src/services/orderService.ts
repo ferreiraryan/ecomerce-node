@@ -5,53 +5,82 @@ interface CartItemDTO {
   quantity: number;
 }
 
-export const createOrderService = async (userId: string, items: CartItemDTO[]) => {
-  const productIds = items.map(item => item.productId);
-  const products = await prisma.product.findMany({
-    where: { id: { in: productIds } },
-  });
+interface CreateOrderDTO {
+  userId: string;
+  items: CartItemDTO[];
+  shippingAddress: string;
+}
 
-  const productMap = new Map(products.map(p => [p.id, p]));
+export const createOrderService = async ({ userId, items, shippingAddress }: CreateOrderDTO) => {
+  return prisma.$transaction(async (tx) => {
+    let total = 0;
+    const orderItemsData = [];
 
-  let total = 0;
-  const orderItemsData = items.map(item => {
-    const product = productMap.get(item.productId);
-    if (!product) {
-      throw new Error(`Produto com ID ${item.productId} não encontrado.`);
+    for (const item of items) {
+      const product = await tx.product.findUnique({ where: { id: item.productId } });
+
+      if (!product) {
+        throw new Error(`Produto com ID ${item.productId} não encontrado.`);
+      }
+
+      if (product.stock < item.quantity) {
+        throw new Error(`Produto ${product.name} sem estoque suficiente (Restam: ${product.stock}).`);
+      }
+
+      total += product.price * item.quantity;
+
+      orderItemsData.push({
+        productId: item.productId,
+        quantity: item.quantity,
+        price: product.price,
+      });
+
+      await tx.product.update({
+        where: { id: item.productId },
+        data: { stock: { decrement: item.quantity } },
+      });
     }
-    total += product.price * item.quantity;
-    return {
-      productId: item.productId,
-      quantity: item.quantity,
-      price: product.price,
-    };
-  });
 
-  const order = await prisma.$transaction(async (tx) => {
-    const newOrder = await tx.order.create({
+    const order = await tx.order.create({
       data: {
         userId,
         total,
+        shippingAddress,
+        status: 'PAID', // Simulação
+        items: {
+          create: orderItemsData,
+        },
+      },
+      include: {
+        items: {
+          include: { product: true }
+        }
       },
     });
 
-    await tx.orderItem.createMany({
-      data: orderItemsData.map(item => ({
-        ...item,
-        orderId: newOrder.id,
-      })),
-    });
-
-    return newOrder;
+    return order;
   });
-
-  return order;
 };
 
-export const getOrdersByUserService = (userId: string) => {
+export const getUserOrdersService = (userId: string) => {
   return prisma.order.findMany({
     where: { userId },
-    orderBy: { createdAt: 'desc' },
+    include: {
+      items: {
+        include: {
+          product: true,
+        },
+      },
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
+};
+
+export const getOrderByIdService = async (userId: string, orderId: string) => {
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
     include: {
       items: {
         include: {
@@ -60,4 +89,12 @@ export const getOrdersByUserService = (userId: string) => {
       },
     },
   });
+
+  if (!order) return null;
+
+  if (order.userId !== userId) {
+    throw new Error('Acesso negado.');
+  }
+
+  return order;
 };

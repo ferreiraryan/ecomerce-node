@@ -1,7 +1,5 @@
 import { Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import * as orderService from '../services/orderService';
 
 interface AuthRequest extends Request {
   user?: {
@@ -10,10 +8,10 @@ interface AuthRequest extends Request {
   };
 }
 
-export const createOrder = async (req: AuthRequest, res: Response) => {
-  const { items, shippingAddress } = req.body;
+export const createOrder = async (req: Request, res: Response) => {
   const authReq = req as AuthRequest;
   const userId = authReq.user?.id;
+  const { items, shippingAddress } = req.body;
 
   if (!userId) {
     return res.status(401).json({ error: 'Usuário não autenticado.' });
@@ -23,86 +21,67 @@ export const createOrder = async (req: AuthRequest, res: Response) => {
     return res.status(400).json({ error: 'Carrinho vazio.' });
   }
 
+  if (!shippingAddress) {
+    return res.status(400).json({ error: 'Endereço de entrega é obrigatório.' });
+  }
+
   try {
-    const result = await prisma.$transaction(async (tx) => {
-      let total = 0;
-      const orderItemsData = [];
-
-      for (const item of items) {
-        const product = await tx.product.findUnique({ where: { id: item.productId } });
-
-        if (!product) {
-          throw new Error(`Produto ${item.productId} não encontrado.`);
-        }
-
-        if (product.stock < item.quantity) {
-          throw new Error(`Produto ${product.name} sem estoque suficiente.`);
-        }
-
-        total += product.price * item.quantity;
-
-        orderItemsData.push({
-          productId: item.productId,
-          quantity: item.quantity,
-          price: product.price
-        });
-
-        await tx.product.update({
-          where: { id: item.productId },
-          data: { stock: { decrement: item.quantity } }
-        });
-      }
-
-      const order = await tx.order.create({
-        data: {
-          userId,
-          total,
-          shippingAddress: shippingAddress || "Endereço padrão",
-          status: 'PAID',
-          items: {
-            create: orderItemsData
-          }
-        },
-        include: {
-          items: true
-        }
-      });
-
-      return order;
+    const order = await orderService.createOrderService({
+      userId,
+      items,
+      shippingAddress
     });
 
-    return res.status(201).json(result);
+    return res.status(201).json(order);
 
   } catch (error: any) {
-    return res.status(400).json({ error: error.message || 'Erro ao processar pedido.' });
+    if (error.message.includes('estoque') || error.message.includes('encontrado')) {
+      return res.status(400).json({ error: error.message });
+    }
+    console.error(error);
+    return res.status(500).json({ error: 'Erro interno ao processar pedido.' });
   }
 };
 
-export const getUserOrders = async (req: AuthRequest, res: Response) => {
-  try {
-    const authReq = req as AuthRequest;
-    const userId = authReq.user?.id;
+export const getUserOrders = async (req: Request, res: Response) => {
+  const authReq = req as AuthRequest;
+  const userId = authReq.user?.id;
 
-    if (!userId) {
-      return res.status(401).json({ error: 'Usuário não autenticado.' });
+  if (!userId) {
+    return res.status(401).json({ error: 'Usuário não autenticado.' });
+  }
+
+  try {
+    const orders = await orderService.getUserOrdersService(userId);
+    return res.status(200).json(orders);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Erro ao buscar pedidos.' });
+  }
+};
+
+export const getOrderById = async (req: Request, res: Response) => {
+  const authReq = req as AuthRequest;
+  const userId = authReq.user?.id;
+  const orderId = req.params.id;
+
+  if (!userId) {
+    return res.status(401).json({ error: 'Usuário não autenticado.' });
+  }
+
+  try {
+    const order = await orderService.getOrderByIdService(userId, orderId);
+
+    if (!order) {
+      return res.status(404).json({ error: 'Pedido não encontrado.' });
     }
 
-    const orders = await prisma.order.findMany({
-      where: { userId },
-      include: {
-        items: {
-          include: {
-            product: true
-          }
-        }
-      },
-      orderBy: {
-        createdAt: 'desc'
-      }
-    });
-
-    res.status(200).json(orders);
-  } catch (error) {
-    res.status(500).json({ message: 'Erro ao buscar pedidos.' });
+    return res.status(200).json(order);
+  } catch (error: any) {
+    if (error.message === 'Acesso negado.') {
+      return res.status(403).json({ error: error.message });
+    }
+    console.error(error);
+    return res.status(500).json({ error: 'Erro ao buscar o pedido.' });
   }
 };
