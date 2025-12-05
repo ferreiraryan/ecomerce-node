@@ -44,9 +44,21 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   const addItem = (product: Product, quantity = 1) => {
     setItems((prev) => {
       const index = prev.findIndex((i) => i.product.id === product.id);
-
       if (index === -1) {
+        if (quantity > product.stock) {
+          console.warn("Estoque insuficiente");
+          return prev; // não adiciona
+        }
+
         return [...prev, { product, quantity }];
+      }
+
+      const existing = prev[index];
+      const newQuantity = existing.quantity + quantity;
+
+      if (newQuantity > product.stock) {
+        console.warn("Estoque insuficiente");
+        return prev; // não atualiza
       }
 
       const copy = [...prev];

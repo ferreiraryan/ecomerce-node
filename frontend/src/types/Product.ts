@@ -6,6 +6,7 @@ export interface Product {
   description: string;
   price: number;
   imageUrl?: string | null;
+  stock: number;
   orderItems?: OrderItem[];
   createdAt: string;
   updatedAt: string;

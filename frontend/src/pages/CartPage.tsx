@@ -1,9 +1,12 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Trash2, Plus, Minus, ArrowLeft, ShoppingBag } from "lucide-react";
 import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
 
 export default function CartPage() {
+  const navigate = useNavigate(); // 2. Instanciar
   const { items, total, removeItem, addItem, decreaseItem } = useCart();
+  const { user } = useAuth();
 
   const formatMoney = (value: number) => {
     return new Intl.NumberFormat("pt-BR", {
@@ -31,6 +34,18 @@ export default function CartPage() {
       </div>
     );
   }
+
+  const handleCheckout = () => {
+    // Dica Pro: Verifique se o usuário está logado antes de mandar pro checkout
+    if (!user) {
+      alert("Você precisa fazer login para finalizar a compra.");
+      navigate('/login');
+      return;
+    }
+
+    // Se estiver logado, manda para o checkout
+    navigate('/checkout');
+  };
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 py-10 px-4 sm:px-6 lg:px-8">
@@ -128,7 +143,7 @@ export default function CartPage() {
               </div>
 
               <button
-                onClick={() => alert("Checkout ainda não implementado!")}
+                onClick={handleCheckout}
                 className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-emerald-900/20 active:scale-95"
               >
                 Finalizar Compra
