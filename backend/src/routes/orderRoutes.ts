@@ -7,6 +7,6 @@ const router = Router();
 router.use(authMiddleware);
 
 router.post('/', authMiddleware, createOrder);
-router.get('/myorders', getUserOrders);
+router.get('/myorders', authMiddleware, getUserOrders);
 
 export default router;

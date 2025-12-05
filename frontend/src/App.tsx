@@ -6,6 +6,7 @@ import RegisterPage from './pages/RegisterPage';
 import ProductPage from './pages/ProductPage';
 import CartPage from './pages/CartPage';
 import { CheckoutPage } from './pages/CheckoutPage';
+import { ProfilePage } from './pages/ProfilePage';
 
 function App() {
   const { user, logout, loading } = useAuth();
@@ -68,6 +69,8 @@ function App() {
           <Route path="/product/:id" element={<ProductPage />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
+
+          <Route path="/profile" element={<ProfilePage />} />
 
 
 

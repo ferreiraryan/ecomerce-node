@@ -4,12 +4,16 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 interface AuthRequest extends Request {
-  userId?: string;
+  user?: {
+    id: string;
+    role: string;
+  };
 }
 
 export const createOrder = async (req: AuthRequest, res: Response) => {
   const { items, shippingAddress } = req.body;
-  const userId = req.userId;
+  const authReq = req as AuthRequest;
+  const userId = authReq.user?.id;
 
   if (!userId) {
     return res.status(401).json({ error: 'Usuário não autenticado.' });
@@ -76,7 +80,8 @@ export const createOrder = async (req: AuthRequest, res: Response) => {
 
 export const getUserOrders = async (req: AuthRequest, res: Response) => {
   try {
-    const userId = req.userId;
+    const authReq = req as AuthRequest;
+    const userId = authReq.user?.id;
 
     if (!userId) {
       return res.status(401).json({ error: 'Usuário não autenticado.' });
