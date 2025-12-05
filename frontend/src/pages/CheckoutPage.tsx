@@ -1,8 +1,22 @@
-import { useState, type FormEvent } from 'react';
+import { useState, type FormEvent, type ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from "../context/CartContext";
 import { api } from "../services/api";
-import { MapPin, ShoppingBag, ArrowLeft } from 'lucide-react'; // Adicionei ícones para combinar
+import { MapPin, ShoppingBag, ArrowLeft } from 'lucide-react';
+
+const maskCEP = (value: string) => {
+  return value
+    .replace(/\D/g, '')
+    .replace(/^(\d{5})(\d)/, '$1-$2')
+    .substring(0, 9);
+};
+
+const maskUF = (value: string) => {
+  return value
+    .replace(/[^a-zA-Z]/g, '')
+    .toUpperCase()
+    .substring(0, 2);
+};
 
 export function CheckoutPage() {
   const { items, total, clearCart } = useCart();
@@ -19,9 +33,25 @@ export function CheckoutPage() {
 
   const fullAddress = `${address.street}, ${address.number} - ${address.city}/${address.state} (${address.zip})`;
 
+  // Handlers específicos para aplicar as máscaras
+  const handleZipChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setAddress({ ...address, zip: maskCEP(e.target.value) });
+  };
+
+  const handleStateChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setAddress({ ...address, state: maskUF(e.target.value) });
+  };
+
   const handleFinishOrder = async (e: FormEvent) => {
     e.preventDefault();
     setIsProcessing(true);
+
+    // Validação básica de tamanho do CEP
+    if (address.zip.length < 9) {
+      alert("Por favor, digite um CEP válido.");
+      setIsProcessing(false);
+      return;
+    }
 
     try {
       const formattedItems = items.map(item => ({
@@ -46,7 +76,6 @@ export function CheckoutPage() {
     }
   };
 
-  // Estado Vazio (Dark Mode)
   if (items.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-slate-950 text-slate-100">
@@ -63,7 +92,6 @@ export function CheckoutPage() {
     );
   }
 
-  // Estilos comuns para inputs no tema dark
   const inputClassName = "w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent placeholder-slate-500 transition-all";
   const labelClassName = "block text-sm font-medium text-slate-300 mb-2";
 
@@ -111,7 +139,8 @@ export function CheckoutPage() {
                   placeholder="00000-000"
                   className={inputClassName}
                   value={address.zip}
-                  onChange={e => setAddress({ ...address, zip: e.target.value })}
+                  onChange={handleZipChange}
+                  maxLength={9}
                 />
               </div>
             </div>
@@ -132,18 +161,17 @@ export function CheckoutPage() {
                 <input
                   type="text"
                   required
-                  maxLength={2}
                   placeholder="UF"
                   className={`${inputClassName} uppercase`}
                   value={address.state}
-                  onChange={e => setAddress({ ...address, state: e.target.value })}
+                  onChange={handleStateChange}
+                  maxLength={2}
                 />
               </div>
             </div>
           </form>
         </div>
 
-        {/* LADO DIREITO: RESUMO E PAGAMENTO */}
         <div className="h-fit space-y-6">
           <div className="bg-slate-900 p-6 sm:p-8 rounded-2xl shadow-2xl border border-slate-800">
             <h2 className="text-2xl font-bold mb-6 text-slate-50 flex items-center gap-3">
