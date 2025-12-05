@@ -1,11 +1,15 @@
 import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { ArrowLeft, ShoppingCart, Trash2 } from "lucide-react";
+import { ArrowLeft, ShoppingCart, Trash2, Ban } from "lucide-react";
 
 import { api } from "../services/api";
 import type { Product } from "../types/Product";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
+
+interface ProductWithStock extends Product {
+  stock: number;
+}
 
 function ProductPage() {
   const { id } = useParams();
@@ -13,10 +17,12 @@ function ProductPage() {
 
   const { addItem, removeItem, items } = useCart();
 
-  const [product, setProduct] = useState<Product | null>(null);
+  const [product, setProduct] = useState<ProductWithStock | null>(null);
   const [loading, setLoading] = useState(true);
 
   const isInCart = items.some((item) => item.product.id === product?.id);
+
+  const hasStock = (product?.stock ?? 0) > 0;
 
   async function loadProduct() {
     try {
@@ -56,7 +62,15 @@ function ProductPage() {
         </Link>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16">
-          <div className="bg-slate-900 rounded-2xl p-4 border border-slate-800 shadow-2xl flex items-center justify-center aspect-square overflow-hidden">
+          <div className="bg-slate-900 rounded-2xl p-4 border border-slate-800 shadow-2xl flex items-center justify-center aspect-square overflow-hidden relative">
+            {!hasStock && (
+              <div className="absolute inset-0 bg-slate-950/60 flex items-center justify-center backdrop-blur-sm">
+                <span className="bg-red-600 text-white px-6 py-2 rounded-full font-bold text-xl shadow-lg transform -rotate-12 border-2 border-red-400">
+                  ESGOTADO
+                </span>
+              </div>
+            )}
+
             {productImage ? (
               <img src={productImage} alt={product.name} className="w-full h-full object-contain" />
             ) : (
@@ -66,11 +80,26 @@ function ProductPage() {
 
           <div className="flex flex-col justify-center">
             <h1 className="text-3xl sm:text-4xl font-bold text-slate-50 mb-4">{product.name}</h1>
-            <div className="text-3xl font-bold text-emerald-400 mb-6">{formatPrice(product.price)}</div>
+
+            <div className="flex items-center gap-4 mb-6">
+              <div className="text-3xl font-bold text-emerald-400">{formatPrice(product.price)}</div>
+              {hasStock && product.stock < 5 && (
+                <span className="text-yellow-500 text-sm font-medium bg-yellow-500/10 px-2 py-1 rounded">
+                  Restam apenas {product.stock} unidades!
+                </span>
+              )}
+            </div>
+
             <p className="text-slate-300 leading-relaxed text-lg mb-8">{product.description}</p>
 
             <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-slate-800">
-              {user ? (
+
+              {!hasStock ? (
+                <div className="flex-1 bg-slate-800 border border-slate-700 rounded-xl p-4 text-center flex items-center justify-center gap-2 text-slate-500 cursor-not-allowed select-none">
+                  <Ban className="w-5 h-5" />
+                  <span className="font-bold">Produto Indisponível</span>
+                </div>
+              ) : user ? (
                 isInCart ? (
                   <button
                     onClick={() => removeItem(product.id)}
@@ -96,6 +125,7 @@ function ProductPage() {
                   <span className="text-slate-400"> para comprar.</span>
                 </div>
               )}
+
             </div>
 
           </div>
