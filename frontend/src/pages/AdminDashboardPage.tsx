@@ -57,6 +57,12 @@ export function AdminDashboard() {
             </h1>
             <p className="text-slate-400">Gerencie o catálogo da sua loja.</p>
           </div>
+          <Link
+            to="/admin/orders"
+            className="bg-amber-400 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2 transition shadow-lg shadow-emerald-900/20"
+          >
+            Pedidos
+          </Link>
 
           <Link
             to="/admin/products/new"
