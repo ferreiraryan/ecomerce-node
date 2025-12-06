@@ -1,3 +1,4 @@
+import { OrderStatus } from '@prisma/client';
 import prisma from '../config/prisma';
 
 interface CartItemDTO {
@@ -23,11 +24,19 @@ export const createOrderService = async ({ userId, items, shippingAddress }: Cre
         throw new Error(`Produto com ID ${item.productId} não encontrado.`);
       }
 
+      if (typeof item.quantity !== 'number' || !Number.isInteger(item.quantity)) {
+        throw new Error(`O valor "${item.quantity}" não é um número inteiro válido.`);
+      }
+
+
+
       if (product.stock < item.quantity) {
         throw new Error(`Produto ${product.name} sem estoque suficiente (Restam: ${product.stock}).`);
       }
 
-      total += product.price * item.quantity;
+      if (item.quantity)
+
+        total += product.price * item.quantity;
 
       orderItemsData.push({
         productId: item.productId,
@@ -95,6 +104,32 @@ export const getOrderByIdService = async (userId: string, orderId: string) => {
   if (order.userId !== userId) {
     throw new Error('Acesso negado.');
   }
+
+  return order;
+};
+
+
+export const getAllOrdersAdminService = async () => {
+  const order = await prisma.order.findMany({
+    include: {
+      user: { select: { name: true, email: true } },
+      items: { include: { product: true } }
+    },
+    orderBy: { createdAt: 'desc' }
+  });
+
+  if (!order) return null;
+
+  return order;
+};
+
+
+export const updateOrderStatusService = async (id: string, status: OrderStatus) => {
+  const order = await prisma.order.update({
+    where: { id },
+    data: { status },
+  });
+  if (!order) return null;
 
   return order;
 };

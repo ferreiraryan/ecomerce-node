@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import * as orderService from '../services/orderService';
+import { updateOrderStatusService } from '../services/orderService';
 
 interface AuthRequest extends Request {
   user?: {
@@ -38,6 +39,7 @@ export const createOrder = async (req: Request, res: Response) => {
     if (error.message.includes('estoque') || error.message.includes('encontrado')) {
       return res.status(400).json({ error: error.message });
     }
+
     console.error(error);
     return res.status(500).json({ error: 'Erro interno ao processar pedido.' });
   }
@@ -83,5 +85,27 @@ export const getOrderById = async (req: Request, res: Response) => {
     }
     console.error(error);
     return res.status(500).json({ error: 'Erro ao buscar o pedido.' });
+  }
+};
+
+export const getAllOrdersAdmin = async (req: Request, res: Response) => {
+  try {
+    const orders = await orderService.getAllOrdersAdminService();
+
+    return res.status(200).json(orders);
+  } catch (error) {
+    return res.status(500).json({ error: 'Erro ao listar pedidos.' });
+  }
+};
+
+export const updateOrderStatus = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  try {
+    const order = await updateOrderStatusService(id, status);
+    return res.status(200).json(order);
+  } catch (error) {
+    return res.status(500).json({ error: 'Erro ao atualizar status.' });
   }
 };
