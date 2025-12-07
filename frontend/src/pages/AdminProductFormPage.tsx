@@ -8,16 +8,20 @@ export function AdminProductForm() {
   const navigate = useNavigate();
   const isEditing = !!id;
 
+  const [categories, setCategories] = useState<{ id: string, name: string }[]>([]);
+
   const [formData, setFormData] = useState({
     name: '',
     description: '',
     price: '',
     stock: '',
-    imageUrl: ''
+    imageUrl: '',
+    categoryId: ''
   });
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    api.get('/categories').then(res => setCategories(res.data));
     if (isEditing) {
       loadProduct();
     }
@@ -32,7 +36,8 @@ export function AdminProductForm() {
         description: p.description,
         price: p.price.toString(),
         stock: p.stock.toString(),
-        imageUrl: p.imageUrl || ''
+        imageUrl: p.imageUrl || '',
+        categoryId: p.categoryId
       });
     } catch (error) {
       alert('Erro ao carregar produto.');
@@ -104,6 +109,22 @@ export function AdminProductForm() {
                 value={formData.description}
                 onChange={e => setFormData({ ...formData, description: e.target.value })}
               />
+            </div>
+
+            <div>
+              <label className={labelClass}>Categoria</label>
+              <select
+                className={inputClass}
+                value={formData.categoryId}
+                onChange={e => setFormData({ ...formData, categoryId: e.target.value })}
+              >
+                <option value="">Selecione uma categoria...</option>
+                {categories.map(cat => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

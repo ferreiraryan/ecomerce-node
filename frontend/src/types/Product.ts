@@ -8,6 +8,7 @@ export interface Product {
   imageUrl?: string | null;
   stock: number;
   orderItems?: OrderItem[];
+  categoryId: string;
   createdAt: string;
   updatedAt: string;
 }

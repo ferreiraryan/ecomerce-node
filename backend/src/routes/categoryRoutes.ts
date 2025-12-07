@@ -5,7 +5,6 @@ import { adminMiddleware } from '../middlewares/adminMiddleware';
 
 const router = Router();
 
-router.use();
 
 router.get('/', getAllCategories);
 
