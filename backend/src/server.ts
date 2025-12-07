@@ -5,6 +5,7 @@ import cors from "cors";
 import authRoutes from './routes/authRoutes';
 import productRoutes from './routes/productRoutes';
 import orderRoutes from './routes/orderRoutes';
+import categoryRouters from './routes/categoryRoutes';
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use(express.json());
 app.use('/api/orders', orderRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/categories', categoryRouters);
 
 app.get('/', (req: Request, res: Response) => {
   res.status(200).json({ message: 'API do e-commerce em TypeScript está funcionando!' });
