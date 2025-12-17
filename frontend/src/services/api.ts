@@ -1,8 +1,9 @@
 // src/services/api.ts
+// src/services/api.ts
 import axios from 'axios';
 
 export const api = axios.create({
-  baseURL: 'http://localhost:3333/api',
+  baseURL: import.meta.env.VITE_API_URL,
 });
 
 api.interceptors.request.use((config) => {
@@ -14,3 +15,4 @@ api.interceptors.request.use((config) => {
 
   return config;
 });
+
