@@ -10,6 +10,8 @@ const app = express();
 const allowedOrigins = [
   'http://localhost:5173',
   'https://ecomerce-node-one.vercel.app',
+  "https://ecomerce-node-git-main-ferreiraryans-projects.vercel.app",
+  "https://ecomerce-node-git-main-ferreiraryans-projects.vercel.app/"
 ];
 app.use(cors({
   origin: (origin, callback) => {
